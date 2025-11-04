@@ -1,0 +1,19 @@
+# MiniRH Data File
+# Nomes cifrados com deslocamento +3 (Cifra de César)
+# Formato:
+# NOME_CIFRADO
+# dia,mes,ano,tipo
+# tipo = F (Férias), X (Falta)
+
+Mrdr
+10,11,2025,F
+13,11,2025,X
+
+Sulb
+20,12,2025,F
+21,12,2025,F
+28,12,2025,X
+
+Crvhu
+5,1,2026,F
+6,1,2026,X
