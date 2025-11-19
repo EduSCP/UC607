@@ -7,8 +7,9 @@
 
 using namespace std;
 
-void executarSistema() {
-    vector<Colaborador*> colabs;
+void executarSistema()
+{
+    vector<Colaborador *> colabs;
 
     // Tenta carregar colaboradores do ficheiro
     int lidos = carregarColaboradores("data.txt", colabs);
@@ -16,127 +17,170 @@ void executarSistema() {
 
     bool sair = false;
 
-    while (!sair) {
+    while (!sair)
+    {
         int op = mostrarMenu();
 
-        switch (op) {
-            case 1: { // Adicionar colaborador
-                cout << "Nome do colaborador: ";
-                string nome;
-                getline(cin, nome);
+        switch (op)
+        {
 
-                bool existe = false;
-                for (auto c : colabs)
-                    if (c->nome == nome) existe = true;
-
-                if (existe) {
-                    cout << "Já existe um colaborador com esse nome!\n";
-                } else {
-                    colabs.push_back(new Colaborador(nome));
-                    cout << "Colaborador adicionado com sucesso.\n";
-                }
-                break;
-            }
-
-            case 2: { // Listar
-                listarColaboradores(colabs);
-                break;
-            }
-
-            case 3: // Marcar férias
-            case 4: { // Marcar falta
-                listarColaboradores(colabs);
-                if (colabs.empty()) break;
-                cout << "Escolha o número do colaborador: ";
-                int n;
-                cin >> n;
-                cin.ignore();
-                if (n < 1 || n > (int)colabs.size()) {
-                    cout << "Número inválido.\n";
-                    break;
-                }
-
-                int dia, mes, ano;
-                cout << "Data (dia mes ano): ";
-                cin >> dia >> mes >> ano;
-                cin.ignore();
-
-                int dw = diaSemana(dia, mes, ano);
-                if (dw == 0 || dw == 6) {
-                    cout << "Não é permitido marcar ao fim de semana!\n";
-                    break;
-                }
-
-                if (dia < 1 || dia > diasNoMes(mes, ano)) {
-                    cout << "Dia inválido para esse mês!\n";
-                    break;
-                }
-
-                char tipo = (op == 3) ? 'F' : 'X';
-                adicionarMarcacao(colabs[n-1], dia, mes, ano, tipo);
-                cout << ((op == 3) ? "Férias" : "Falta") << " marcada.\n";
-                break;
-            }
-
-            case 5: { // Desmarcar
-                listarColaboradores(colabs);
-                if (colabs.empty()) break;
-                cout << "Escolha o número do colaborador: ";
-                int n;
-                cin >> n;
-                cin.ignore();
-                if (n < 1 || n > (int)colabs.size()) {
-                    cout << "Número inválido.\n";
-                    break;
-                }
-
-                int dia, mes, ano;
-                cout << "Data (dia mes ano): ";
-                cin >> dia >> mes >> ano;
-                cin.ignore();
-
-                removerMarcacao(colabs[n-1], dia, mes, ano);
-                cout << "Dia desmarcado.\n";
-                break;
-            }
-
-            case 6: { // Ver calendário
-                listarColaboradores(colabs);
-                if (colabs.empty()) break;
-                cout << "Escolha o número do colaborador: ";
-                int n;
-                cin >> n;
-                cin.ignore();
-                if (n < 1 || n > (int)colabs.size()) {
-                    cout << "Número inválido.\n";
-                    break;
-                }
-
-                int mes, ano;
-                cout << "Mês e ano (ex: 11 2025): ";
-                cin >> mes >> ano;
-                cin.ignore();
-                mostrarCalendario(colabs[n-1], mes, ano);
-                break;
-            }
-
-            case 7: { // Guardar e sair
-                if (guardarColaboradores("data.txt", colabs))
-                    cout << "Dados guardados com sucesso!\n";
-                else
-                    cout << "Erro ao guardar ficheiro!\n";
-                sair = true;
-                break;
-            }
-
-            default:
-                cout << "Opção inválida!\n";
+        case 1:
+        { // Listar colaboradores
+            listarColaboradores(colabs);
+            break;
         }
+
+        case 2:
+        { // Adicionar colaborador
+            cout << "Nome do colaborador: ";
+            string nome;
+            getline(cin, nome);
+
+            bool existe = false;
+            for (auto c : colabs)
+                if (c->nome == nome)
+                    existe = true;
+
+            if (existe)
+            {
+                cout << "Já existe um colaborador com esse nome!\n";
+            }
+            else
+            {
+                colabs.push_back(new Colaborador(nome));
+                cout << "Colaborador adicionado com sucesso.\n";
+            }
+            break;
+        }
+
+        case 3:
+        { // Marcar férias/faltas → submenu
+            // vamos criar esta função mais tarde
+            cout << ">>> Marcação de férias/faltas (a implementar)\n";
+            break;
+        }
+
+        case 4:
+        { // Visualizar calendário
+            listarColaboradores(colabs);
+            if (colabs.empty())
+                break;
+
+            cout << "Escolha o número do colaborador: ";
+            int n;
+            cin >> n;
+            cin.ignore();
+
+            if (n < 1 || n > (int)colabs.size())
+            {
+                cout << "Número inválido.\n";
+                break;
+            }
+
+            int mes, ano;
+            cout << "Mês e ano (ex: 11 2025): ";
+            cin >> mes >> ano;
+            cin.ignore();
+
+            mostrarCalendario(colabs[n - 1], mes, ano);
+            break;
+        }
+
+        case 5:
+        {
+            cout << ">>> Buscar colaborador por nome/ID (a implementar)\n";
+            break;
+        }
+
+        case 6:
+        {
+            cout << ">>> Gestão de formações/cursos (a implementar)\n";
+            break;
+        }
+
+        case 7:
+        {
+            cout << ">>> Gestão de notas/observações (a implementar)\n";
+            break;
+        }
+
+        case 8:
+        { // Relatórios mensais
+            gerarRelatorioMensal(colabs);
+            break;
+        }
+
+        case 9:
+        {
+            cout << ">>> Estatísticas por departamento (a implementar)\n";
+            break;
+        }
+
+        case 10:
+        {
+            cout << ">>> Dashboard resumido (a implementar)\n";
+            break;
+        }
+
+        case 0:
+        {
+            if (guardarColaboradores("data.txt", colabs))
+                cout << "Dados guardados com sucesso!\n";
+            else
+                cout << "Erro ao guardar ficheiro!\n";
+            sair = true;
+            break;
+        }
+
+        default:
+            cout << "Opção inválida!\n";
+        }
+
+        // Libertar memória
+        for (auto c : colabs)
+            delete c;
+
+        cout << "Programa terminado.\n";
     }
 
-    // Libertar memória
-    for (auto c : colabs)
-        delete c;
+    void gerarRelatorioMensal(const vector<Colaborador *> &colabs)
+    {
+        if (colabs.empty())
+        {
+            cout << "Nenhum colaborador registado.\n";
+            return;
+        }
 
-    cout << "Programa terminado.\n";
-}
+        int mes, ano;
+        cout << "Gerar relatório de que mês e ano? (ex: 11 2025): ";
+        cin >> mes >> ano;
+        cin.ignore();
+
+        cout << "\n===== RELATÓRIO MENSAL =====\n";
+        cout << nomeMes(mes) << " de " << ano << "\n";
+        cout << "------------------------------\n";
+
+        for (auto c : colabs)
+        {
+            int ferias = 0;
+            int faltas = 0;
+
+            int dias = diasNoMes(mes, ano);
+
+            // percorre todos os dias do mês
+            for (int d = 1; d <= dias; d++)
+            {
+                char m = obterMarcacao(c, d, mes, ano);
+                if (m == 'F')
+                    ferias++;
+                if (m == 'X')
+                    faltas++;
+            }
+
+            cout << c->nome
+                 << "  |  Férias: " << ferias
+                 << "  |  Faltas: " << faltas << "\n";
+        }
+
+        cout << "------------------------------\n";
+    }
