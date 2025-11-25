@@ -5,6 +5,13 @@
 #include <sstream>
 #include <iostream>
 
+// Função auxiliar de encriptação simples
+static std::string encriptar(const std::string &s) {
+    std::string r = s;
+    for (char &c : r) c ^= 7;
+    return r;
+}
+
 int carregarColaboradores(const std::string &ficheiro, std::vector<Colaborador*> &colabs) {
     std::ifstream ifs(ficheiro);
     if(!ifs.is_open()) return 0;
@@ -15,10 +22,16 @@ int carregarColaboradores(const std::string &ficheiro, std::vector<Colaborador*>
     while(std::getline(ifs, line)) {
         if(line.empty()) continue;
         std::stringstream ss(line);
-        std::string encname;
+        
+        // Formato: nome_encriptado;departamento_encriptado;marcacoes
+        std::string encname, encdept;
         if(!std::getline(ss, encname, ';')) continue;
-        std::string nome = decryptName(encname);
-        Colaborador *c = new Colaborador(nome);
+        if(!std::getline(ss, encdept, ';')) continue;
+        
+        std::string nome = encriptar(encname);
+        std::string departamento = encriptar(encdept);
+        
+        Colaborador *c = new Colaborador(nome, departamento);
 
         std::string rest;
         if(std::getline(ss, rest)) {
@@ -34,7 +47,7 @@ int carregarColaboradores(const std::string &ficheiro, std::vector<Colaborador*>
                 sscanf(date.c_str(), "%d-%d-%d", &d,&m,&a);
                 if(d>0 && m>0 && a>0 && (t=='T' || t=='X')) {
                     char tipo = (t=='T') ? 'F' : 'X';
-                    adicionarMarcacao(c, d, m, a, tipo);
+                    c->adicionarMarcacao(d, m, a, tipo);
                 }
             }
         }
@@ -52,8 +65,10 @@ bool guardarColaboradores(const std::string &ficheiro, const std::vector<Colabor
     if(!ofs.is_open()) return false;
 
     for(auto c : colabs) {
-        std::string enc = encryptName(c->nome);
-        ofs << enc << ";";
+        std::string encnome = encriptar(c->nome);
+        std::string encdept = encriptar(c->departamento);
+        ofs << encnome << ";" << encdept << ";";
+        
         bool first = true;
         for(auto &m : c->marcacoes) {
             if(!first) ofs << ",";

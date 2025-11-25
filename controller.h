@@ -1,13 +1,13 @@
 // controller.h
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
-
-#include <vector>
+#pragma once
 #include "colaborador.h"
+#include <vector>
 
-// Função principal que corre o menu e as ações do sistema
+Colaborador* procurarColaborador(const std::vector<Colaborador*> &colabs, const std::string &nomeOuId);
 void executarSistema();
 
-void gerarRelatorioMensal(const vector<Colaborador *> &colabs);
-
-#endif
+// Funções auxiliares do sistema
+void gerarRelatorioMensal(const std::vector<Colaborador*> &colabs);
+void buscarColaborador(const std::vector<Colaborador*> &colabs);
+void mostrarEstatisticasColaborador(const std::vector<Colaborador*> &colabs);
+void exportarRelatorioColaborador(const Colaborador *c, int ano, const std::string &ficheiro);

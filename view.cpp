@@ -1,8 +1,9 @@
 // view.cpp
-#include "view.h"
-#include "utils.h"
 #include <iostream>
 #include <iomanip>
+#include "view.h"
+#include "utils.h"        // <-- NECESSÁRIO para nomeMes, diasNoMes
+#include "colaborador.h"  // <-- NECESSÁRIO para obterMarcacao
 
 using namespace std;
 
@@ -21,60 +22,43 @@ int mostrarMenu()
     cout << "8. Relatorios mensais\n";
     cout << "9. Estatisticas por departamento\n";
     cout << "10. Dashboard resumido\n";
+    cout << "11. Exportar dados\n";
     cout << "0. Guardar e sair\n";
     cout << "-----------------------------\n";
     cout << "Escolha: ";
 
-    int op;
-    cin >> op;
-    cin.ignore();
-    return op;
+    int opcao;
+    cin >> opcao;
+    cin.ignore(); // remove newline
+    return opcao;
 }
 
-void listarColaboradores(const vector<Colaborador *> &colabs)
+void listarColaboradores(const vector<Colaborador*> &colabs)
 {
     cout << "\n--- Lista de Colaboradores ---\n";
-    if (colabs.empty())
+    int i = 1;
+    for (auto c : colabs)
     {
-        cout << "Nenhum colaborador registado.\n";
-        return;
+        cout << i++ << ") " << c->nome << "  [" << c->departamento << "]\n";
     }
-    for (size_t i = 0; i < colabs.size(); ++i)
-        cout << i + 1 << ") " << colabs[i]->nome << endl;
 }
 
 void mostrarCalendario(const Colaborador *c, int mes, int ano)
 {
-    cout << "\nCalendário de " << c->nome << " - " << nomeMes(mes) << " " << ano << "\n";
-    cout << "Dom Seg Ter Qua Qui Sex Sab\n";
+    cout << "\n=== Calendário de " << c->nome
+         << " — " << nomeMes(mes) << " " << ano << " ===\n";
 
-    int primeiroDia = diaSemana(1, mes, ano);
-    int dias = diasNoMes(mes, ano);
+    int totalDias = diasNoMes(mes, ano);
 
-    // espaçamento inicial
-    for (int i = 0; i < primeiroDia; i++)
-        cout << "    ";
-
-    for (int d = 1; d <= dias; d++)
+    for (int d = 1; d <= totalDias; d++)
     {
-        int diaSem = diaSemana(d, mes, ano);
-        char marca = obterMarcacao(c, d, mes, ano);
+        char t = c->obterMarcacao(d, mes, ano);
 
-        if (marca == 'F' || marca == 'X')
-        {
-            cout << setw(2) << d << marca << " ";
-        }
-        else if (diaSem == 0 || diaSem == 6)
-        {
-            cout << setw(2) << d << "() ";
-        }
+        if (t == 'F')
+            cout << setw(2) << d << ": Férias\n";
+        else if (t == 'X')
+            cout << setw(2) << d << ": Falta\n";
         else
-        {
-            cout << setw(2) << d << "   ";
-        }
-
-        if (diaSem == 6)
-            cout << "\n";
+            cout << setw(2) << d << ": ( )\n";
     }
-    cout << "\nLegenda: (F) Férias | (X) Falta | () Fim de semana\n";
 }
